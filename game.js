@@ -15,6 +15,21 @@ window.addEventListener('resize', resizeCanvas);
 document.addEventListener('keydown', (e) => keys[e.code] = true);
 document.addEventListener('keyup', (e) => keys[e.code] = false);
 
+const leftBtn = document.getElementById('left-btn');
+const rightBtn = document.getElementById('right-btn');
+const jumpBtn = document.getElementById('jump-btn');
+
+let touchKeys = { left: false, right: false, jump: false };
+
+leftBtn.addEventListener('touchstart', e => { e.preventDefault(); touchKeys.left = true; });
+leftBtn.addEventListener('touchend', e => { e.preventDefault(); touchKeys.left = false; });
+
+rightBtn.addEventListener('touchstart', e => { e.preventDefault(); touchKeys.right = true; });
+rightBtn.addEventListener('touchend', e => { e.preventDefault(); touchKeys.right = false; });
+
+jumpBtn.addEventListener('touchstart', e => { e.preventDefault(); touchKeys.jump = true; });
+jumpBtn.addEventListener('touchend', e => { e.preventDefault(); touchKeys.jump = false; });
+
 function startGame() {
   document.getElementById('start-screen').style.display = 'none';
   score = 0;
@@ -24,6 +39,8 @@ function startGame() {
   player = { x: 100, y: height - 150, w: 40, h: 40, vy: 0, grounded: false };
   requestAnimationFrame(gameLoop);
 }
+
+document.getElementById('start-btn').addEventListener('click', startGame);
 
 function drawPlayer() {
   ctx.fillStyle = '#ffffff';
@@ -71,12 +88,12 @@ function drawObstacles() {
 }
 
 function updatePlayer() {
-  // Contrôle horizontal
-  if (keys['ArrowRight'] || keys['KeyD']) {
+  // Contrôle horizontal avec clavier ou tactile
+  if (keys['ArrowRight'] || keys['KeyD'] || touchKeys.right) {
     player.x += 6;
     if (player.x + player.w > width) player.x = width - player.w;
   }
-  if (keys['ArrowLeft'] || keys['KeyA']) {
+  if (keys['ArrowLeft'] || keys['KeyA'] || touchKeys.left) {
     player.x -= 6;
     if (player.x < 0) player.x = 0;
   }
@@ -94,8 +111,8 @@ function updatePlayer() {
     player.grounded = false;
   }
 
-  // Saut
-  if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && player.grounded) {
+  // Saut clavier ou tactile
+  if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW'] || touchKeys.jump) && player.grounded) {
     player.vy = -20;
   }
 }
